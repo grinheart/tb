@@ -57,10 +57,20 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function Main() {
+    const locStor = window.localStorage;
+
+    const b = locStor.getItem('balance');
+    const [balance, setBalance] = useState(b ? +b : 1000);
     const [show, setShow] = useState(false);
-    const [expense, setExpense] = useState([]);
-    const [totalExpenses, setTotalExpenses] = useState(0);
-    const [totalBalance, setTotalBalance] = useState(1000);
+    let expenses = JSON.parse(locStor.getItem('expenses'));
+    expenses = expenses ? expenses : [];
+    const [expense, setExpense] = useState(expenses);
+    const [totalExpenses, setTotalExpenses] = useState(
+        balance - expenses
+                    .map(ex => ex.price)
+                    .reduce((accum, val) => accum + val, 0)
+    );
+    const [totalBalance, setTotalBalance] = useState(balance);
 
     useEffect(() => {
         let count = 0;
@@ -72,7 +82,13 @@ export default function Main() {
     }, [expense]);
 
     useEffect(() => {
-        let count = 1000;
+        setTotalBalance(balance - expenses
+                    .map(ex => ex.price)
+                    .reduce((accum, val) => accum + val, 0));
+    }, [balance])
+
+    useEffect(() => {
+        let count = balance;
         for (let i = 0; i < expense.length; i++) {
             count -= parseInt(expense[i].price);
         }
@@ -123,9 +139,11 @@ export default function Main() {
             )} */}
             <BalanceExpense
                 totalExpenses={totalExpenses}
-                totalBalance={totalBalance}
+                totalBalance={balance}
+                leftoverBalance={totalBalance}
+                setTotalBalance={setBalance}
             />
-            {show && <ExpenseForm expense={expense} setExpense={setExpense} />}
+            {show && <ExpenseForm expense={expense} setExpense={setExpense} handleClose={handleClose} />}
 
             <ExpenseList expense={expense} setExpense={setExpense} />
         </div>

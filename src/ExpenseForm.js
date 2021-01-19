@@ -11,6 +11,7 @@ export default function ExpenseForm({
     const desc = useRef(null);
     const date = useRef(null);
     const price = useRef(null);
+    const cat = useRef(null);
 
     const AddExpense = (e) => {
         e.preventDefault();
@@ -18,25 +19,33 @@ export default function ExpenseForm({
         let d = date.current.value.split('-');
         let newD = new Date(d[0], d[1] - 1, d[2]);
 
-        setExpense([
+        const updateExpenses = [
             ...expense,
             {
                 desc: desc.current.value,
-                price: price.current.value,
+                price: +price.current.value,
+                category: cat.current.value,
                 date: newD.getTime(),
             },
-        ]);
+        ];
+
+        setExpense(updateExpenses);
+        const locStor = window.localStorage;
+        locStor.setItem('expenses', JSON.stringify(updateExpenses));
 
         desc.current.value = '';
         price.current.value = null;
         date.current.value = null;
+
+        handleClose();
     };
 
     return (
         <form className="expense-form" onSubmit={AddExpense}>
             <div className="form-inner">
-                <select placeholder="Spending...">
-                    <option value="">Category</option>
+                <select placeholder="Spending..."
+                    ref={cat}>
+                    <option value="category">Category</option>
                     <option value="bus">Bus</option>
                     <option value="airplane">Airplane</option>
                     <option value="taxi">Taxi</option>

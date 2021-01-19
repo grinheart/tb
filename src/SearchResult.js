@@ -69,33 +69,10 @@
 // }
 
 import React, { useEffect, useState } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import Avatar from '@material-ui/core/Avatar';
-import IconButton from '@material-ui/core/IconButton';
-import { Row, Item } from '@mui-treasury/components/flex';
-import { Info, InfoTitle, InfoSubtitle } from '@mui-treasury/components/info';
-import { useTutorInfoStyles } from '@mui-treasury/styles/info/tutor';
-import { useSizedIconButtonStyles } from '@mui-treasury/styles/iconButton/sized';
-import { useDynamicAvatarStyles } from '@mui-treasury/styles/avatar/dynamic';
-import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
-import './SearchResult.css';
+import PlacesList from './PlacesList';
 import SearchBar from './SearchBar';
 
-const useStyles = makeStyles(() => ({
-    action: {
-        backgroundColor: '#fff',
-        boxShadow: '0 1px 4px 0 rgba(0,0,0,0.12)',
-        '&:hover': {
-            backgroundColor: '#f50057',
-            color: '#000',
-        },
-    },
-}));
-
 export default function SearchResult(props) {
-    const styles = useStyles();
-    const iconBtnStyles = useSizedIconButtonStyles({ padding: 6 });
-    const avatarStyles = useDynamicAvatarStyles({ radius: 12, size: 100 });
     return (
         <>
             <SearchBar
@@ -105,41 +82,7 @@ export default function SearchResult(props) {
                 onChange={props.handleChange}
             />
             {props.place &&
-                props.place.map((p) => {
-                    return (
-                        <Row
-                            p={1.5}
-                            gap={2}
-                            bgcolor={'#f5f5f5'}
-                            borderRadius={16}
-                            borderBottom={1}
-                        >
-                            <Item>
-                                <Avatar
-                                    classes={avatarStyles}
-                                    src={'img111.jpg'}
-                                />
-                            </Item>
-                            <Info
-                                position={'middle'}
-                                useStyles={useTutorInfoStyles}
-                            >
-                                <InfoTitle>{p.name}</InfoTitle>
-                                <InfoSubtitle>
-                                    {p.location.address}, {p.location.city}
-                                </InfoSubtitle>
-                            </Info>
-                            <Item ml={1} position={'middle'}>
-                                <IconButton
-                                    className={styles.action}
-                                    classes={iconBtnStyles}
-                                >
-                                    <FavoriteBorderIcon />
-                                </IconButton>
-                            </Item>
-                        </Row>
-                    );
-                })}
+                (<PlacesList place={props.place} toggle={props.toggle} />)}
         </>
     );
 }
